@@ -1,61 +1,195 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# URL Shortener API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This is a REST API for shortening URLs, built with Laravel. It includes user authentication, URL management, and bonus features like visit tracking.
 
-## About Laravel
+## ✅ Features Checklist
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+This project successfully implements the following features:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Core Features
+- [x] **User Registration:** `POST /api/register` to create a new user account.
+- [x] **User Login:** `POST /api/login` to authenticate and receive a Sanctum API token.
+- [x] **URL Shortening:** `POST /api/shorten` for authenticated users to create short URLs.
+- [x] **List User URLs:** `GET /api/urls` for authenticated users to retrieve their created URLs.
+- [x] **Redirection:** `GET /{short_code}` to redirect users to the original URL.
+- [x] **Visit Tracking:** Automatically counts visits for each redirect.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+<a href="https://documenter.getpostman.com/view/48422144/2sB3HqGdFc" target="_blank" rel="noopener noreferrer">
+  <button style="padding:10px 16px; border-radius:6px; border:none; cursor:pointer; font-weight:600; background-color:#f97316; color:#ffffff;">
+    View Postman Collections
+  </button>
+</a>
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## 📦 Installation Instructions
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+To set up this project locally, follow these steps:
 
-## Laravel Sponsors
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/ahanafislam/urlShortenerAPI.git
+    cd urlShortenerAPI
+    ```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+2.  **Install PHP dependencies:**
+    ```bash
+    composer install
+    ```
 
-### Premium Partners
+3.  **Create your environment file:**
+    ```bash
+    cp .env.example .env
+    ```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+4.  **Generate an application key:**
+    ```bash
+    php artisan key:generate
+    ```
 
-## Contributing
+5.  **Configure your database:**
+    Open the `.env` file and set your database credentials (`DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`).
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+6.  **Run the database migrations:**
+    This will create all the necessary tables (`users`, `urls`, `personal_access_tokens`, etc.).
+    ```bash
+    php artisan migrate
+    ```
 
-## Code of Conduct
+7.  **Start the local server:**
+    ```bash
+    php artisan serve
+    ```
+    Your application will be running at `http://127.0.0.1:8000`.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+## 📖 API Documentation
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+All API endpoints expect and return JSON. Always include the following header in your requests:
 
-## License
+`Accept: application/json`
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 1. User Registration
+
+- **Endpoint:** `POST /api/register`
+- **Description:** Creates a new user account.
+- **Authentication:** Public
+
+**Request Body:**
+```json
+{
+    "name": "Test User",
+    "email": "test@example.com",
+    "password": "password123",
+    "password_confirmation": "password123"
+}
+```
+
+**Success Response (201 Created):**
+```json
+{
+    "message": "User registered successfully",
+    "user": {
+        "name": "Test User",
+        "email": "test@example.com",
+        "updated_at": "2025-09-15T12:00:00.000000Z",
+        "created_at": "2025-09-15T12:00:00.000000Z",
+        "id": 1
+    }
+}
+```
+
+### 2. User Login
+
+- **Endpoint:** `POST /api/login`
+- **Description:** Authenticates a user and returns a Sanctum API token.
+- **Authentication:** Public
+
+**Request Body:**
+```json
+{
+    "email": "test@example.com",
+    "password": "password123"
+}
+```
+
+**Success Response (200 OK):**
+```json
+{
+    "message": "Login successful",
+    "token": "1|aBcDeFgHiJkLmNoPqRsTuVwXyZ1234567890"
+}
+```
+
+### 3. Shorten a New URL
+
+- **Endpoint:** `POST /api/shorten`
+- **Description:** Creates a new short URL for the authenticated user.
+- **Authentication:** Required (`Bearer Token`)
+
+**Headers:**
+`Authorization: Bearer <your_token>`
+
+**Request Body:**
+```json
+{
+    "original_url": "https://www.google.com/search?q=laravel"
+}
+```
+*Note: `expires_at` is optional.*
+
+**Success Response (201 Created):**
+```json
+{
+    "message": "URL shortened successfully",
+    "data": {
+        "original_url": "https://www.google.com/search?q=laravel",
+        "short_code": "aBc123",
+        "expires_at": "2026-12-31 00:00:00",
+        "user_id": 1,
+        "id": 1,
+        "updated_at": "2025-09-15T12:05:00.000000Z",
+        "created_at": "2025-09-15T12:05:00.000000Z"
+    }
+}
+```
+
+### 4. Get User's URLs
+
+- **Endpoint:** `GET /api/urls`
+- **Description:** Retrieves a list of all URLs shortened by the authenticated user.
+- **Authentication:** Required (`Bearer Token`)
+
+**Headers:**
+`Authorization: Bearer <your_token>`
+
+**Success Response (200 OK):**
+```json
+{
+    "data": [
+        {
+            "id": 1,
+            "original_url": "https://www.google.com/search?q=laravel",
+            "short_code": "aBc123",
+            "short_url": "http://localhost:8000/aBc123",
+            "visit_count": 0,
+            "created_at": "2025-09-15 12:05:00"
+        }
+    ]
+}
+```
+
+### 5. Redirection
+
+- **Endpoint:** `GET /{short_code}`
+- **Description:** Redirects a user to the original URL. This is a web route, not an API route.
+- **Authentication:** Public
+
+**Usage:**
+Simply visit the short URL in a web browser (e.g., `http://localhost:8000/aBc123`).
+
+- If the link is valid and not expired, you will be redirected with a `301` status code.
+- If the link has expired, you will receive a `410 Gone` response.
+- If the link does not exist, you will receive a `404 Not Found` response.
